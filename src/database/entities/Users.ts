@@ -11,13 +11,18 @@ class Users {
 
     @Column()
     name: string
-    
+
     @Column()
     email: string
-    
+
     @Column()
     password: string
-    
+
+    @Column({
+        default: 'ROLE_USER'
+    })
+    role: string
+
     @CreateDateColumn()
     createdAt: Date
 

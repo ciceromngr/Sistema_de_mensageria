@@ -9,6 +9,9 @@ class UsersController {
         return res.status(201).json(user)
     }
 
+    async getaAllUsers(req: Request, res: Response) {
+        
+    }   
 }
 
 export { UsersController }

@@ -4,6 +4,8 @@ import Queue from '../../background/libs/Queue'
 import IHandleUserRequest from '../../interfaces/HandleUsers'
 import { UsersRepository } from '../repository/UsersRepository'
 
+import bcrypt from 'bcrypt'
+
 class UsersService {
 
     async handle({ name, email, password }: IHandleUserRequest) {
@@ -18,19 +20,24 @@ class UsersService {
 
         if (!(await schema.isValid({ name, email, password }))) throw new Error("Todos os campos, são obrigatorios!")
 
-        // verificar se o email ja foi cadastrado
-
         const userAlreadyExist = await userRepository.findOne({ email })
 
-        if (userAlreadyExist) throw new Error("Usuario já esta cadastro na base de dados!")
+        if (userAlreadyExist) throw new Error('Usuario cadastrado.')
 
-        const user = userRepository.create({
-            name,
-            email,
-            password
-        })
+        const admin = process.env.IS_ADMIN_AUTHORIZATION.split(',')
+        const verify = admin.find(a => a.indexOf(email) !== -1)
 
-        await userRepository.save(user)
+        if (verify) {
+
+            const user = userRepository.create({
+                name,
+                email,
+                password: await bcrypt.hash(password, 8),
+                role: "ROLE_ADMIN"
+            })
+
+            await userRepository.save(user)
+        }
 
         // enviar um email de confirmacao 
         await Queue.add('SendMailForUser', { name, email })
@@ -40,6 +47,10 @@ class UsersService {
             email,
             msg: "Cadastro realizado com sucesso!"
         }
+    }
+
+    async getAllUsers() {
+
     }
 
 }

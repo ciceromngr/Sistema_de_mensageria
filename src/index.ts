@@ -1,7 +1,8 @@
 import 'dotenv/config'
+import 'express-async-errors'
 import 'reflect-metadata'
 import './database/index'
-import express, { Request, Response } from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import cors from 'cors'
 import { routes } from './router/routes'
 
@@ -29,9 +30,9 @@ class App {
 
     exceptionHandler() {
         this.app.use(
-            (err: Error, req: Request, res: Response) => {
+            (err: Error, req: Request, res: Response, next: NextFunction) => {
                 if (err instanceof Error) {
-                    return res.status(200).json(err.message)
+                    return res.status(401).json({ error: err.message })
                 }
 
                 return res.status(500).json({ msg: 'Internal server error' })
