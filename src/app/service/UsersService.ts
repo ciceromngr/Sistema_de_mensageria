@@ -24,20 +24,13 @@ class UsersService {
 
         if (userAlreadyExist) throw new Error('Usuario cadastrado.')
 
-        const admin = process.env.IS_ADMIN_AUTHORIZATION.split(',')
-        const verify = admin.find(a => a.indexOf(email) !== -1)
+        const user = userRepository.create({
+            name,
+            email,
+            password: await bcrypt.hash(password, 8)
+        })
 
-        if (verify) {
-
-            const user = userRepository.create({
-                name,
-                email,
-                password: await bcrypt.hash(password, 8),
-                role: "ROLE_ADMIN"
-            })
-
-            await userRepository.save(user)
-        }
+        await userRepository.save(user)
 
         // enviar um email de confirmacao 
         await Queue.add('SendMailForUser', { name, email })

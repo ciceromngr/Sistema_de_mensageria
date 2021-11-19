@@ -18,11 +18,6 @@ class Users {
     @Column()
     password: string
 
-    @Column({
-        default: 'ROLE_USER'
-    })
-    role: string
-
     @CreateDateColumn()
     createdAt: Date
 
