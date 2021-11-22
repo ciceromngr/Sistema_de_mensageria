@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Roles } from "./Roles";
 
 @Entity('users')
 class Users {
@@ -23,6 +24,14 @@ class Users {
 
     @UpdateDateColumn()
     updatedAt: Date
+
+    @ManyToMany(() => Roles)
+    @JoinTable({
+        name: "user_roles",
+        joinColumns: [{ name: 'users_id' }],
+        inverseJoinColumns: [{ name: 'roles_id' }]
+    })
+    roles: Roles[]
 }
 
 export { Users }

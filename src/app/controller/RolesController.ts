@@ -7,9 +7,7 @@ class RolesController {
 
         const rolesService = new RolesService()
 
-        const { name, description } = req.body
-
-        const permission = await rolesService.create({ name, description })
+        const permission = await rolesService.create(req.body)
 
         return res.status(201).json(permission)
         

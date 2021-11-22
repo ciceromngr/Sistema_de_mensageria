@@ -5,12 +5,14 @@ import IHandleUserRequest from '../../interfaces/HandleUsers'
 import { UsersRepository } from '../repository/UsersRepository'
 
 import bcrypt from 'bcrypt'
+import { RolesRepository } from '../repository/RolesRepository'
 
 class UsersService {
 
-    async handle({ name, email, password }: IHandleUserRequest) {
+    async handle({ name, email, password, roles }: IHandleUserRequest) {
 
         const userRepository = getCustomRepository(UsersRepository)
+        const rolesRepository = getCustomRepository(RolesRepository)
 
         const schema = yup.object().shape({
             name: yup.string().required(),
@@ -24,10 +26,13 @@ class UsersService {
 
         if (userAlreadyExist) throw new Error('Usuario cadastrado.')
 
+        const existRoles = await rolesRepository.findByIds(roles)
+
         const user = userRepository.create({
             name,
             email,
-            password: await bcrypt.hash(password, 8)
+            password: await bcrypt.hash(password, 8),
+            roles: existRoles
         })
 
         await userRepository.save(user)
@@ -35,9 +40,10 @@ class UsersService {
         // enviar um email de confirmacao 
         await Queue.add('SendMailForUser', { name, email })
 
+        delete user.password
+
         return {
-            name,
-            email,
+            user,
             msg: "Cadastro realizado com sucesso!"
         }
     }
