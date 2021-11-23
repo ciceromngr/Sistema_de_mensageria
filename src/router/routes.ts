@@ -1,9 +1,10 @@
 import { Router } from 'express'
-import { ensureAuthentiaction } from '../app/controller/IsAuthenticated'
 import { LoginController } from '../app/controller/LoginController'
 import { PermissionsController } from '../app/controller/PermissisonsController'
 import { RolesController } from '../app/controller/RolesController'
 import { UsersController } from '../app/controller/UsersController'
+
+import { is } from '../middlewares/Permissions'
 
 const routes = Router()
 const userController = new UsersController()
@@ -15,9 +16,8 @@ routes.post('/users', userController.handle)
 routes.post('/login', loginController.handle)
 routes.post('/permissions', permissionsController.create)
 routes.post('/roles', rolesController.create)
-// routes.use(ensureAuthentiaction)
 
-routes.get('/produtos',(req, res) => {
+routes.get('/produtos', is(["ROLE_ADMIN"]) ,(req, res) => {
     return res.json([
         { id: 1, name: 'hello worlds' }
     ])

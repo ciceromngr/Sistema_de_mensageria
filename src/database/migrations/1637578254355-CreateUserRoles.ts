@@ -15,7 +15,7 @@ export class CreateUserRoles1637578254355 implements MigrationInterface {
                         name: 'FKUser_roles',
                         referencedTableName: "users",
                         referencedColumnNames: ["id"],
-                        columnNames: ["user_id"],
+                        columnNames: ["users_id"],
                         onDelete: "SET NULL",
                         onUpdate: "SET NULL"
                     },
