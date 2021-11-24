@@ -1,6 +1,5 @@
 import { verify } from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
-import { decode } from "jsonwebtoken";
 import { getCustomRepository } from "typeorm";
 import { UsersRepository } from "../app/repository/UsersRepository";
 
